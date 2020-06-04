@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#define DEBUG FALSE
 
 /*
 Fun program to demonstrate floating point math using strings!
@@ -114,6 +113,6 @@ int main()
         }
 
     }
-    
+    return(0);
 
 }

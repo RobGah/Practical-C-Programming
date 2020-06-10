@@ -2,17 +2,15 @@
 #include <stdlib.h>
 
 /* 
-Write a cross-reference program - I was unclear as to what that was initially.
-Takes an array of ints, puts them into a linked list and prints them out, but could do this with other objects I suppose.
+Write a function that deletes an element from a double linked list.
 
-I peeked at https://kernelthusiast.com/solutions-to-book-exercises/
-to get an idea of what exactly to do as the book just says "create a cross reference program" - which is awfully vague. 
-Wrote my own version independent of the answer presented, however
+Copied my cross-reference program from Chap17Evercise1 and added a del_node function
 */
 
-#define ARRAYSIZE 10
+#define ARRAYSIZE 5
 
 char user_input[100];
+int int_to_del;
 struct linked_list 
 {
     int data; //the data - in this case an integer
@@ -28,6 +26,9 @@ struct linked_list *new_item_ptr = NULL;//a new node pointer
 struct linked_list *create_node(int data);
 void add_node(struct linked_list *new_item_ptr);
 void print_linked_list(struct linked_list *ptr);
+struct linked_list *find_node_w_value(int data, struct linked_list *linked_list_entry_ptr);
+void del_node(struct linked_list *node_to_del);
+
 
 int main()
 {
@@ -46,6 +47,12 @@ int main()
         data+=offset;
     }
     //printf("\n");
+    print_linked_list(head_ptr);
+    printf("Now enter an integer to delete from the list:\n");
+    fgets(user_input, sizeof(user_input), stdin);
+    sscanf(user_input, "%d", &int_to_del);
+    
+    del_node(find_node_w_value(int_to_del, head_ptr));
     print_linked_list(head_ptr);
     return(0);
 }
@@ -128,5 +135,59 @@ void print_linked_list(struct linked_list *linked_list_entry_ptr)
        printf("%d\n",current_node_ptr->data);
        current_node_ptr = current_node_ptr->next_ptr;
    }
+}
+
+struct linked_list *find_node_w_value(int data, struct linked_list *linked_list_entry_ptr)
+{
+    /* 
+    A function to find the node containing a specified data value in a specified linked list.
+
+    inputs: the integer to find and the entry-point pointer of the linked-list to search. 
+    outputs: the pointer to the node in which the specified integer was found. Returns NULL if not found.
+    */
+    struct linked_list *search_ptr = linked_list_entry_ptr; //set search ptr to the head of the list
+    while (search_ptr != NULL) //while we're on a valid node
+    {
+        if(search_ptr->data == data) //if we find a match
+        {
+            printf("Node containing %d found.\n",data);
+            return(search_ptr); //tell us which node
+        }
+        else
+        {
+            search_ptr = search_ptr->next_ptr; //advance to the next element of the list
+        }
+    }
+
+    if (search_ptr == NULL)
+    {
+        printf("No node containing %d found\n",data);
+        return(search_ptr);
+    }  
+}
+
+void del_node(struct linked_list *node_to_del)
+{
+    /*
+    Deletes a node of a double-linked list with a specified data value
+
+    input: the node to remove from the list
+    output: void (deletes the node)
+    */
+   if(node_to_del==NULL)
+   { 
+       printf("Error: Node to delete is NULL.\n");
+       return;
+   }
+
+   //current node's next pointer's previous pointer now points to current node's previous ptr
+   node_to_del->next_ptr->previous_ptr = node_to_del->previous_ptr; 
+   //current node's previous pointer's next pointer now points to current node's next pointer
+   node_to_del->previous_ptr->next_ptr = node_to_del->next_ptr;
+
+   //now to delete node
+   free(node_to_del); //free memory allocated to node
+   node_to_del = NULL; // set deleted node pointer to NULL to prevent out-of-bounds errors. 
+   
 }
 

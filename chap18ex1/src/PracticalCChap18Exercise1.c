@@ -48,6 +48,7 @@ int main()
         {
             printf("Enter a header for the document.\n");
             fgets(user_input,sizeof(user_input),stdin);
+            user_input[strlen(user_input)-1] = '\0'; //kill newline char
             print_line(define_header(user_input));
             ++line_count;
         }
